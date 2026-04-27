@@ -4,7 +4,7 @@
 
 ### Project Name
 
-**MyCampusLink** (originally mycampuslink)
+**MyCampusLink** (originally myutplink)
 
 ### Description
 
