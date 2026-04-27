@@ -4,7 +4,7 @@
 
 ### Project Name
 
-**MyCampusLink** (originally myutplink)
+**MyCampusLink** (originally mycampuslink)
 
 ### Description
 
@@ -30,7 +30,8 @@ Installation:
 3. Make a MongoDB server (for storing user data):
     1. Locally: Download and install [MongoDB Community Server](https://www.mongodb.com/try/download/community) and use `mongodb://localhost:27017/urlshortener` url in [.env](.env.example)
     2. Online: Go to [MongoDB](https://mongodb.com) and register your accounts, and make a cluster database and copy the mongodb string and use it in [.env](.env.example)
-4. Generate a [JWT Secret Key](https://jwtsecretkeygenerator.com/) and put it in .env.example
-5. Make sure information in [.env](.env.example) are filled in and file name is renamed to .env
+4. Generate a [JWT Secret Key](https://jwtsecretkeygenerator.com/) and put it in [.env](.env.example)
+5. Put the server url in [.env](.env.example) like vercel
+6. Make sure information in [.env](.env.example) are filled in and file name is renamed to .env
 
 IHZAQ © 2026
