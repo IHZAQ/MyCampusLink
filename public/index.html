@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyCampusLink - URL Shortener</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --input-bg: #f9f9f9;
+            --button-bg: #2196F3;
+            --button-hover: #1976D2;
+            --card-bg: #ffffff;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode {
+            --bg-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --input-bg: #2a2a2a;
+            --button-bg: #1e88e5;
+            --button-hover: #1565c0;
+            --card-bg: #2a2a2a;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.dark-mode h1 {
+            background: linear-gradient(135deg, #64B5F6, #42A5F5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* User Profile Button */
+        .user-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .profile-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, background-color 0.3s;
+            padding: 0;
+        }
+
+        .profile-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--button-hover);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            display: none;
+            flex-direction: column;
+            min-width: 200px;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.active {
+            display: flex;
+        }
+
+        .dropdown-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-color);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--input-bg);
+        }
+
+        .dropdown-item.logout {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .dropdown-item.logout:hover {
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark-mode .card:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        h3 {
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        input[type="url"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus,
+        input[type="url"]:focus {
+            outline: none;
+            border-color: var(--button-bg);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        button {
+            padding: 12px 24px;
+            margin: 5px 5px 5px 0;
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .toggle-link {
+            color: var(--button-bg);
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .toggle-link:hover {
+            color: var(--button-hover);
+        }
+
+        .result {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .result p {
+            margin-bottom: 10px;
+        }
+
+        .result img {
+            max-width: 150px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .result img:hover {
+            transform: scale(1.05);
+        }
+
+        /* QR Download Modal */
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-modal.active {
+            display: flex;
+        }
+
+        .qr-modal-content {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .qr-modal-content h3 {
+            margin-bottom: 20px;
+        }
+
+        .qr-modal-content img {
+            max-width: 250px;
+            margin: 20px 0;
+            cursor: default;
+        }
+
+        .qr-modal-content img:hover {
+            transform: none;
+        }
+
+        .qr-modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .qr-modal-buttons button {
+            margin: 0;
+        }
+
+        .links {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .link-item {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            transition: box-shadow 0.3s;
+        }
+
+        .link-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .link-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .link-item p {
+            margin-bottom: 10px;
+        }
+
+        .link-item strong {
+            color: var(--button-bg);
+        }
+
+        .link-item input {
+            margin: 0;
+            margin-right: 8px;
+            width: calc(100% - 58px);
+            padding: 8px;
+        }
+
+        .edit-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 8px 8px;
+            color: var(--button-bg);
+            transition: transform 0.2s;
+        }
+
+        .edit-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .delete-btn {
+            background: #f44336 !important;
+            margin-top: 10px;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f !important;
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            background: var(--input-bg);
+            border-radius: 20px;
+            padding: 2px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-switch span {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--text-color);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 3px;
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .toggle-switch span.active {
+            background: var(--button-bg);
+            color: white;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="user-menu" id="user-menu" style="display: none;">
+        <button class="profile-btn" onclick="toggleDropdown()">👤</button>
+        <div class="dropdown-menu" id="dropdown-menu">
+            <div class="dropdown-item theme-toggle">
+                <span>🌙 Dark Mode</span>
+                <div class="toggle-switch" onclick="toggleDarkMode(event)">
+                    <span class="sun-icon active">☀️</span>
+                    <span class="moon-icon">🌙</span>
+                </div>
+            </div>
+            <div class="dropdown-item logout" onclick="logout()">
+                🚪 Logout
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Download Modal -->
+    <div class="qr-modal" id="qr-modal">
+        <div class="qr-modal-content">
+            <h3>Download QR Code</h3>
+            <img id="qr-modal-image" src="" alt="QR Code">
+            <p>Click the button below to download this QR code</p>
+            <div class="qr-modal-buttons">
+                <button onclick="downloadQRCode()">📥 Download</button>
+                <button onclick="closeQRModal()" style="background: #666;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>🔗 MyCampusLink</h1>
+
+        <div id="auth-section" class="card">
+            <h2>Authentication</h2>
+            <div id="login-form">
+                <h3>Login</h3>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button onclick="login()">Login</button>
+                <p class="toggle-link" onclick="toggleForm()">No account? Click here to register</p>
+            </div>
+            <div id="register-form" style="display: none;">
+                <h3>Register</h3>
+                <input type="text" id="register-username" placeholder="Username" required>
+                <input type="email" id="register-email" placeholder="Email" required>
+                <input type="password" id="register-password" placeholder="Password" required>
+                <button onclick="register()">Register</button>
+                <p class="toggle-link" onclick="toggleForm()">Already have an account? Click here to login</p>
+            </div>
+        </div>
+
+        <div id="shortener-section" class="card" style="display: none;">
+            <h2>Shorten URL</h2>
+            <input type="url" id="url-input" placeholder="Enter URL to shorten (e.g., https://example.com or mailto:email@example.com)" required>
+            <button onclick="shortenUrl()">Shorten</button>
+            <div id="result" class="result" style="display: none;"></div>
+        </div>
+
+        <div id="links-section" class="card" style="display: none;">
+            <h2>Your Short Links</h2>
+            <button onclick="loadLinks()">🔄 Refresh Links</button>
+            <div id="links-list" class="links"></div>
+        </div>
+    </div>
+
+    <script>
+        let token = localStorage.getItem('token');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let darkMode = localStorage.getItem('darkMode') === 'true';
+
+        function isValidUrl(urlString) {
+            const urlPattern = /^(https?:\/\/|mailto:|tel:|ftp:\/\/|ftps:\/\/|file:\/\/|ssh:\/\/|sftp:\/\/|news:|nntp:\/\/|sms:|sip:|sips:|git:\/\/|bitcoin:|magnet:).*$/i;
+            return urlPattern.test(urlString);
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown-menu');
+            dropdown.classList.toggle('active');
+        }
+
+        function closeDropdown() {
+            const dropdown = document.getElementById('dropdown-menu');
+            dropdown.classList.remove('active');
+        }
+
+        function toggleDarkMode(event) {
+            event.stopPropagation();
+            darkMode = !darkMode;
+            applyDarkMode();
+            localStorage.setItem('darkMode', darkMode);
+            saveDarkModePreference();
+        }
+
+        function applyDarkMode() {
+            const body = document.body;
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            
+            if (darkMode) {
+                body.classList.add('dark-mode');
+                sunIcon.classList.remove('active');
+                moonIcon.classList.add('active');
+            } else {
+                body.classList.remove('dark-mode');
+                sunIcon.classList.add('active');
+                moonIcon.classList.remove('active');
+            }
+        }
+
+        function saveDarkModePreference() {
+            if (token) {
+                fetch('/api/user-settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ darkMode })
+                }).catch(err => console.error('Error saving theme preference:', err));
+            }
+        }
+
+        function updateUI() {
+            const authSection = document.getElementById('auth-section');
+            const shortenerSection = document.getElementById('shortener-section');
+            const linksSection = document.getElementById('links-section');
+            const userMenu = document.getElementById('user-menu');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+
+            if (token) {
+                authSection.style.display = 'none';
+                shortenerSection.style.display = 'block';
+                linksSection.style.display = 'block';
+                userMenu.style.display = 'block';
+                document.getElementById('url-input').value = '';
+                document.getElementById('result').style.display = 'none';
+                loadLinks();
+            } else {
+                authSection.style.display = 'block';
+                shortenerSection.style.display = 'none';
+                linksSection.style.display = 'none';
+                userMenu.style.display = 'none';
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            }
+            closeDropdown();
+        }
+
+        function toggleForm() {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+        }
+
+        async function register() {
+            const username = document.getElementById('register-username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Registration successful! Please login.');
+                    toggleForm();
+                } else {
+                    alert('Registration failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    token = data.token;
+                    currentUser = data.user;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    darkMode = data.user.darkMode || false;
+                    applyDarkMode();
+                    localStorage.setItem('darkMode', darkMode);
+                    updateUI();
+                } else {
+                    alert('Login failed: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function logout() {
+            token = null;
+            currentUser = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('currentUser');
+            updateUI();
+        }
+
+        async function shortenUrl() {
+            const url = document.getElementById('url-input').value;
+            if (!url) {
+                alert('Please enter a URL');
+                return;
+            }
+
+            if (!isValidUrl(url)) {
+                alert('Invalid URL format. Supported protocols: http://, https://, mailto:, tel:, ftp://, and more.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ url })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('result').innerHTML = `
+                        <p><strong>Original:</strong> <a href="${data.originalUrl}" target="_blank">${data.originalUrl}</a></p>
+                        <p><strong>Short:</strong> <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a></p>
+                        <p><strong>QR Code:</strong><br><img src="${data.qrCode}" alt="QR Code" onclick="openQRModal('${data.qrCode}', '${data.shortCode}')" style="cursor: pointer;" title="Click to download"></p>
+                    `;
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('url-input').value = '';
+                    loadLinks();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function loadLinks() {
+            try {
+                const response = await fetch('/links', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const links = await response.json();
+                const linksList = document.getElementById('links-list');
+                linksList.innerHTML = links.map(link => `
+                    <div class="link-item">
+                        <p><strong>Original:</strong> <input type="url" value="${link.originalUrl}" id="url-${link.shortCode}"><button class="edit-btn" onclick="updateUrl('${link.shortCode}')" title="Update URL">✏️</button></p>
+                        <p><strong>Short:</strong> <a href="${link.shortUrl}" target="_blank">${link.shortUrl}</a></p>
+                        <p><strong>QR Code:</strong><br><img src="${link.qrCode}" alt="QR Code" onclick="openQRModal('${link.qrCode}', '${link.shortCode}')" style="cursor: pointer;" title="Click to download"></p>
+                        <p><strong>Created:</strong> ${new Date(link.createdAt).toLocaleString()}</p>
+                        <button class="delete-btn" onclick="deleteUrl('${link.shortCode}')">Delete</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                alert('Error loading links: ' + error.message);
+            }
+        }
+
+        async function updateUrl(shortCode) {
+            const newUrl = document.getElementById(`url-${shortCode}`).value;
+            if (!newUrl) {
+                alert('URL cannot be empty');
+                return;
+            }
+
+            if (!isValidUrl(newUrl)) {
+                alert('Invalid URL format. Supported protocols: http://, https://, mailto:, tel:, ftp://, and more.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/links/${shortCode}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ originalUrl: newUrl })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('URL updated successfully');
+                    loadLinks();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function deleteUrl(shortCode) {
+            if (!confirm('Are you sure you want to delete this link?')) return;
+
+            try {
+                const response = await fetch(`/links/${shortCode}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Link deleted successfully');
+                    loadLinks();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.getElementById('user-menu');
+            const profileBtn = document.querySelector('.profile-btn');
+            if (userMenu && !userMenu.contains(event.target) && event.target !== profileBtn) {
+                closeDropdown();
+            }
+        });
+
+        // QR Code Modal Functions
+        let currentQRCode = null;
+        let currentShortCode = null;
+
+        function openQRModal(qrCodeDataUrl, shortCode) {
+            currentQRCode = qrCodeDataUrl;
+            currentShortCode = shortCode;
+            document.getElementById('qr-modal-image').src = qrCodeDataUrl;
+            document.getElementById('qr-modal').classList.add('active');
+        }
+
+        function closeQRModal() {
+            document.getElementById('qr-modal').classList.remove('active');
+            currentQRCode = null;
+            currentShortCode = null;
+        }
+
+        function downloadQRCode() {
+            if (!currentQRCode) return;
+            
+            const link = document.createElement('a');
+            link.href = currentQRCode;
+            link.download = `qr-code-${currentShortCode || 'mycampuslink'}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert('QR Code downloaded successfully!');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('qr-modal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeQRModal();
+            }
+        });
+
+        // Initialize
+        applyDarkMode();
+        updateUI();
+    </script>
+</body>
+</html>
