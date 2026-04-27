@@ -174,7 +174,7 @@ app.post('/shorten', authenticateToken, async (req, res) => {
     });
     await newUrl.save();
 
-    const shortUrl = `http://localhost:${PORT}/${shortCode}`;
+    const shortUrl = `${process.env.VERCEL_URL || `http://localhost:${PORT}`}/${shortCode}`;
     const qrCode = await qrcode.toDataURL(shortUrl);
 
     res.json({
@@ -191,7 +191,7 @@ app.get('/links', authenticateToken, async (req, res) => {
   try {
     const urls = await Url.find({ user: req.user.id }).sort({ createdAt: -1 });
     const links = await Promise.all(urls.map(async (url) => {
-      const shortUrl = `http://localhost:${PORT}/${url.shortCode}`;
+      const shortUrl = `${process.env.VERCEL_URL || `http://localhost:${PORT}`}/${url.shortCode}`;
       const qrCode = await qrcode.toDataURL(shortUrl);
       return {
         originalUrl: url.originalUrl,
